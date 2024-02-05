@@ -1,17 +1,20 @@
-let testData = [{
-    "position": "bottom-left",
-    "title": "Hello",
-    "content": "Good toast",
-    "toastType": "success",
-    "toastTime": 5000
-}]
-
-let expectedResult = [{
-    "title": "Hello",
-    "content": "Good toast",
-    "toastIcon": '[data-name="checkmark"]',
-    "toastBgr": 'rgb(0, 214, 143)'
-}]
+let toastData = [
+    {
+        "testData": {
+            "position": "bottom-left",
+            "title": "Hello",
+            "content": "Good toast",
+            "toastType": "success",
+            "toastTime": 5000
+        },
+        "expectedResult": {
+            "title": "Hello",
+            "content": "Good toast",
+            "toastIcon": '[data-name="checkmark"]',
+            "toastBgr": 'rgb(0, 214, 143)'
+        }
+    }
+]
 
 
 describe("Positive scenarios", () => {
@@ -29,42 +32,41 @@ describe("Positive scenarios", () => {
 
     it(`Toast verification test`, () => {
 
-
-        for (let i = 0; i < 1; i++) {
-
+        toastData.forEach(toastData => {
             cy.log('Select position');
             cy.get('button:contains("top")').click();
-            cy.get(`[ng-reflect-value = "${testData[i].position}"]`).click();
+            //cy.get(`[ng-reflect-value = "${testData[i].position}"]`).click();
+            cy.get(`[ng-reflect-value = "${toastData.testData.position}"]`).click();
 
 
             cy.log('Select toast type');
             cy.get('nb-card-body div:nth-child(2) button[class="select-button"]').click();
-            cy.get(`[ng-reflect-value = "${testData[i].toastType}"]`).click();
+            cy.get(`[ng-reflect-value = "${toastData.testData.toastType}"]`).click();
 
 
             cy.log('Enter title');
             cy.get('[name="title"]').clear();
-            cy.get('[name="title"]').type(testData[i].title);
+            cy.get('[name="title"]').type(toastData.testData.title);
 
             cy.log('Enter content');
             cy.get('[name="content"]').clear();
-            cy.get('[name="content"]').type(testData[i].content);
+            cy.get('[name="content"]').type(toastData.testData.content);
 
             cy.log('Set time');
             cy.get('[name="timeout"]').clear();
-            cy.get('[name="timeout"]').type(testData[i].toastTime);
+            cy.get('[name="timeout"]').type(toastData.testData.toastTime);
 
 
             cy.get('button:contains("Show toast")').click();
 
             cy.log('Verify title and content');
             cy.get('[class="ng-tns-c209-54 ng-star-inserted"]').then(toast => {
-                expect(toast).to.contain(expectedResult[i].title);
-                expect(toast).to.contain(expectedResult[i].content);
+                expect(toast).to.contain(toastData.expectedResult.title);
+                expect(toast).to.contain(toastData.expectedResult.content);
             })
 
             cy.log('Verify toast icon exists');
-            cy.get(expectedResult[i].toastIcon).then(toast => {
+            cy.get(toastData.expectedResult.toastIcon).then(toast => {
                 expect(toast).to.exist;
             })
 
@@ -75,11 +77,13 @@ describe("Positive scenarios", () => {
                 .invoke('css', 'background-color')
                 .as('background')
                 .then(toast => {
-                    expect(toast).to.contain(expectedResult[i].toastBgr);
+                    expect(toast).to.contain(toastData.expectedResult.toastBgr);
                 })
+        })
 
 
-        }
+
+
 
 
     })
